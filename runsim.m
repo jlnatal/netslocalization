@@ -1,7 +1,7 @@
 N=2^12;
 restr=0.3;
 
-animateon=1;
+animateon=0;
 
 %%%
 %[a,center_of_excitation,cents,culprits,cutoff,dale,distances,i,input_IDs,J,N,positions,r,radii,t,target,FINAL_STATE,Firing_at_rad,howfar,original,asmany,cee,cutstring,filenaming,endtime_in_mins]=get_data(2^10,0.3);
@@ -18,7 +18,7 @@ else
 end
 
 
-number_trials=250;
+number_trials=500;
 [X,Y] = meshgrid(0:.1:4.9,0:.1:4.9);
 allgridpts=[X(:) Y(:)];
 gridpositions=randi(length(allgridpts),number_trials,1);
@@ -114,10 +114,10 @@ tic
 
 %original=zeros(401,N);
 
-%Randomly initialize system, then let it run without input for 200s
+%Initialize system with all rates = a, then let it run without input for t=1000
 r0=a*ones(1,N);
 if noiseon
-    noisestream=1+cumsum(noiselevel*randn(tspan(end),1));
+    noisestream=1+cumsum(noiselevel*randn(1000,1));
     noisestream_smooth=fit((1:tspan(end))',noisestream,'linearinterp');
     [t,r] = ode45(@(t,r) myode_timedep_NOinput(t,r,J,N,noisestream_smooth), tspan,r0);
 else
