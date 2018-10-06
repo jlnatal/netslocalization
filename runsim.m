@@ -3,7 +3,6 @@ restr=0.3;
 
 animateon=0;
 
-%%%
 %[a,center_of_excitation,cents,culprits,cutoff,dale,distances,i,input_IDs,J,N,positions,r,radii,t,target,FINAL_STATE,Firing_at_rad,howfar,original,asmany,cee,cutstring,filenaming,endtime_in_mins]=get_data(2^10,0.3);
 %%%
 
@@ -18,7 +17,7 @@ else
 end
 
 
-number_trials=500;
+number_trials=250;
 [X,Y] = meshgrid(0:.1:4.9,0:.1:4.9);
 allgridpts=[X(:) Y(:)];
 gridpositions=randi(length(allgridpts),number_trials,1);
@@ -118,10 +117,10 @@ tic
 r0=a*ones(1,N);
 if noiseon
     noisestream=1+cumsum(noiselevel*randn(1000,1));
-    noisestream_smooth=fit((1:tspan(end))',noisestream,'linearinterp');
+    noisestream_smooth=fit((1:1000)',noisestream,'linearinterp');
     [t,r] = ode45(@(t,r) myode_timedep_NOinput(t,r,J,N,noisestream_smooth), tspan,r0);
 else
-    [t,r] = ode45(@(t,r) myode_NOinput(t,r,J,N), tspan,r0);
+    [t,r] = ode45(@(t,r) myode_NOinput(t,r,J,N), [0:0.1:1000],r0);
 end
 
 
@@ -222,6 +221,7 @@ end
 
         for ay=1:length(radii_at_which_to_measure)
             within_ring=rangesearch(positions,positions(top,:),radii_at_which_to_measure(ay));
+
             in_ring=within_ring{1,1};
             firing_at_rad(ay)=mean(r(end,in_ring));
         end
@@ -456,7 +456,7 @@ end
     %sum(sum(r==original))
     
     raw_deviations=[centaz(:,1)-allgridpts(gridpositions,1) centaz(:,2)-allgridpts(gridpositions,2)];
-    distances_traveled=[min(raw_deviations(:,1),5-raw_deviations(:,1)) min(raw_deviations(:,2),5-raw_deviations(:,2))];
+    distances_traveled=[min(abs(raw_deviations(:,1)),5-abs(raw_deviations(:,1))) min(abs(raw_deviations(:,2)),5-abs(raw_deviations(:,2)))];
     
         
 endtime_in_mins=toc/60
@@ -468,7 +468,7 @@ if cutoff<1
 elseif (cutoff>1 & cutoff<2)
     cutstring=['1pt' num2str(10*rem(cutoff,1))];
 end
-filenaming=['Data' num2str(cee(1)) num2str(cee(2)) num2str(cee(3)) num2str(cee(4)) num2str(cee(5)) num2str(floor(cee(6))) '__N' num2str(N)  '__cutoff' num2str(cutstring) '___' num2str(asmany) 'runs']
+filenaming=['Data' num2str(cee(1)) num2str(cee(2)) num2str(cee(3)) num2str(cee(4)) num2str(cee(5)) num2str(floor(cee(6))) '__N' num2str(N)  '__cutoff' num2str(cutstring) '___' num2str(asmany) 'runs' '___' 'noiselevel' num2str(noiselevel*1000) 'thousandths']
 %save(filenaming)
 
 
@@ -676,6 +676,15 @@ h(i-100)=figure(i)
 end
 %savefig(h,[filenaming '_figs'])
 
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %scatter(positions(:,1),positions(:,2),degrees-min(degrees)+1,'filled')
 degrees_with_attractors
