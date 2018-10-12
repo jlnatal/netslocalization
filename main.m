@@ -171,7 +171,7 @@ COE_temporal=zeros(number_trials,2,length(devtimes));
     
     
     
-
+howfar=0;
 
 
 for lo=1:length(howfar)
@@ -296,8 +296,8 @@ stim_position=zeros(number_trials,2);
     %[original(end,1:5); r(end,1:5)]
     
     final_states(exper,:)=r(end,:);
-    %centerz(exper,:)=[sum((final_states(exper,:)>a).*positions(:,1)')/sum((final_states(exper,:)>a),2) sum((final_states(exper,:)>a).*positions(:,2)')/sum((final_states(exper,:)>a),2)];
-    COMperiodic_circlemethod; centaz(exper,:)=centa;
+    centa=find_COE(a,positions,final_states(exper,:));
+    centaz(exper,:)=centa;
     
     
     %devtimes=[0:50:750];  ALREADY DEFINED ABOVE
